@@ -1,0 +1,43 @@
+input.blog
+*.pyc
+.vscode
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Configuration (these should be created from templates)
+config.yaml
+
+# Build outputs
+dist/
+build/
+*.zip
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Deployment info (contains sensitive data)
+deployment-info.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/

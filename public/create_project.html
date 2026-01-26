@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+    <title>Azure Blob Storage Management</title>
+    <link rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        rel="stylesheet">
+    <style>
+        body {
+            background: #ffffff;
+            font-family: 'Arial', sans-serif;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 350px;
+            margin: 50px auto;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        @media (min-width: 600px) {
+            .container {
+                max-width: 600px;
+            }
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .btn-custom {
+            background-color: #17a2b8;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #e6d2cd;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .form-control::placeholder {
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1><i class="fas fa-cogs"></i> Project Management</h1>
+        <p style="text-align: center; color: #6c757d; margin-bottom: 30px;">Create and manage your audio testing projects</p>
+
+        <h4 style="color: #2c3e50; margin-top: 20px;"><i class="fas fa-folder-plus"></i> Create New Project</h4>
+        <div class="form-group">
+            <label for="projectName"><i class="fas fa-tag"></i> Project Name (<a href="#"
+                    id="namingRulesLink">see here</a> accepted characters for naming a container):</label>
+            <input type="text"
+                class="form-control"
+                id="projectName"
+                placeholder="Enter project name"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="publicKey">Public Key:</label>
+            <input type="text"
+                class="form-control"
+                id="publicKey"
+                placeholder="Create a public key to share with those you'd like they access your project"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email"
+                class="form-control"
+                id="email"
+                placeholder="Enter your email"
+                required>
+        </div>
+
+        <button class="btn btn-custom btn-block mt-3"
+            id="createContainerButton"
+            onclick="createContainer()">Create Project Container</button>
+
+        <h4 style="color: #2c3e50; margin-top: 30px;"><i class="fas fa-cloud-upload-alt"></i> Upload Content</h4>
+        <div class="form-group">
+            <label for="audioFiles"><i class="fas fa-music"></i> Upload Audio Files:</label>
+            <small style="color:#6c757d">(up to 10, supported formats: MP3, WAV, FLAC, OGG, AAC, M4A)</small>
+            <input type="file"
+                class="form-control"
+                id="audioFiles"
+                multiple
+                accept="audio/*">
+            <button class="btn btn-custom btn-block mt-3"
+                id="uploadAudioButton"
+                onclick="uploadAudioFiles()">Upload Audio Files</button>
+        </div>
+
+        <div class="form-group">
+            <label for="labelsFile"><i class="fas fa-tags"></i> Upload labels.txt (Optional):</label>
+            <small style="color:#6c757d">(see <a
+                    href="https://subjectivelistening.blob.core.windows.net/instructions/How%20to%20create%20labels%20for%20tagging%20audio%20files%20in%20Audacity.mp4"
+                    target="_blank">here</a> how to create labels.txt - used for audio segmentation/regions)</small>
+
+            <input type="file"
+                class="form-control"
+                id="labelsFile"
+                accept=".txt">
+            <button class="btn btn-custom btn-block mt-3"
+                id="uploadLabelsButton"
+                onclick="uploadLabelsFile()">Upload labels.txt (Optional)</button>
+        </div>
+
+        <h4 style="color: #2c3e50; margin-top: 30px;"><i class="fas fa-trash-alt"></i> Delete Project</h4>
+        <div class="form-group">
+            <label for="deleteContainerName"><i class="fas fa-folder-minus"></i> Project Name to Delete:</label>
+            <input type="text"
+                class="form-control"
+                id="deleteContainerName"
+                placeholder="Enter project name"
+                required>
+            <button class="btn btn-danger btn-block mt-3"
+                onclick="deleteContainer()">Delete Project</button>
+        </div>
+
+        <!-- Edit Project Section -->
+        <div class="form-group mt-5" style="border-top: 3px solid #e9ecef; padding-top: 30px;">
+            <h4 style="color: #2c3e50;"><i class="fas fa-edit"></i> Edit Existing Project</h4>
+            <div class="alert alert-info" role="alert">
+                <strong><i class="fas fa-info-circle"></i> How to edit:</strong>
+                <ol style="margin-bottom: 0; padding-left: 20px;">
+                    <li>Select the project you want to edit from the dropdown</li>
+                    <li>Click "Load Project" to view details</li>
+                    <li>Update PublicKey/Email, upload new files, or delete existing files</li>
+                </ol>
+            </div>
+            
+            <label for="editProjectName"><strong>Step 1:</strong> Select Project</label>
+            <select class="form-control"
+                id="editProjectName">
+                <option value="">-- Select a project --</option>
+            </select>
+            
+            <button class="btn btn-info btn-block mt-3"
+                onclick="loadProjectDetails()">
+                <i class="fas fa-download"></i> <strong>Step 2:</strong> Load Project Details
+            </button>
+
+            <div id="editProjectDetails" style="display:none; margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 2px solid #17a2b8;">
+                <h5 style="color: #17a2b8; margin-bottom: 20px;"><i class="fas fa-check-circle"></i> Project Loaded Successfully!</h5>
+                
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Optional:</strong> Leave fields empty to keep current values
+                </div>
+                
+                <label for="editNewPublicKey"><i class="fas fa-key"></i> New Public Key:</label>
+                <input type="text"
+                    class="form-control"
+                    id="editNewPublicKey"
+                    placeholder="Leave empty to keep current">
+                
+                <label for="editNewEmail" class="mt-2"><i class="fas fa-envelope"></i> New Email:</label>
+                <input type="email"
+                    class="form-control"
+                    id="editNewEmail"
+                    placeholder="Leave empty to keep current">
+                
+                <button class="btn btn-success btn-block mt-3"
+                    onclick="updateProject()">
+                    <i class="fas fa-save"></i> Update Project Metadata
+                </button>
+
+                <hr style="margin: 30px 0; border-top: 2px solid #dee2e6;">
+                
+                <h5 style="color: #2c3e50; margin-bottom: 15px;"><i class="fas fa-cloud-upload-alt"></i> Upload New Files</h5>
+                
+                <div class="form-group">
+                    <label for="editAudioFiles"><i class="fas fa-music"></i> Upload Additional Audio Files:</label>
+                    <small style="color:#6c757d">(up to 10 total files per project)</small>
+                    <input type="file"
+                        class="form-control"
+                        id="editAudioFiles"
+                        multiple
+                        accept="audio/*">
+                    <button class="btn btn-custom btn-block mt-2"
+                        onclick="uploadEditAudioFiles(event)">
+                        <i class="fas fa-upload"></i> Upload Audio Files
+                    </button>
+                </div>
+                
+                <div class="form-group mt-3">
+                    <label for="editLabelsFile"><i class="fas fa-tags"></i> Upload/Replace labels.txt:</label>
+                    <small style="color:#6c757d">(will replace existing labels.txt if present)</small>
+                    <input type="file"
+                        class="form-control"
+                        id="editLabelsFile"
+                        accept=".txt">
+                    <button class="btn btn-custom btn-block mt-2"
+                        onclick="uploadEditLabelsFile()">
+                        <i class="fas fa-upload"></i> Upload labels.txt
+                    </button>
+                </div>
+
+                <hr style="margin: 30px 0; border-top: 2px solid #dee2e6;">
+                
+                <h5 style="color: #2c3e50; margin-bottom: 15px;"><i class="fas fa-folder-open"></i> Project Files</h5>
+                <div id="fileList" class="list-group mt-2"></div>
+                <p id="noFilesMessage" style="display:none; color: #6c757d; text-align: center; padding: 20px;">
+                    <i class="fas fa-info-circle"></i> No files found in this project
+                </p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button id="backHomeButton"
+                class="btn btn-warning custom-button"
+                style="width: 180px; text-align: center; justify-content: center; display: flex; margin: 0 auto;"
+                onclick="window.location.href='index.html'">Back to home page</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade"
+        id="namingRulesModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="namingRulesModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog"
+            role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"
+                        id="namingRulesModalLabel">Container Naming Rules</h5>
+                    <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"
+                    style="color: #000;">
+                    <p>A container name must be a valid DNS name, conforming to the following naming rules:</p>
+                    <ul>
+                        <li>Container names must start or end with a letter or number, and can contain only letters,
+                            numbers, and the hyphen/minus (-) character.</li>
+                        <li>Every hyphen/minus (-) character must be immediately preceded and followed by a letter or
+                            number; consecutive hyphens aren't permitted in container names.</li>
+                        <li>All letters in a container name must be lowercase.</li>
+                        <li>Container names must be from 3 through 63 characters long.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                        class="btn btn-secondary"
+                        data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById("namingRulesLink").addEventListener("click", function (event) {
+            event.preventDefault();
+            $("#namingRulesModal").modal('show');
+        });
+    </script>
+    <script src="create_project.js"></script>
+
+</body>
+
+</html>

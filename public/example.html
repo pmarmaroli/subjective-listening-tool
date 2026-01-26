@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://unpkg.com/wavesurfer.js@6/dist/wavesurfer.min.js"></script>
+</head>
+
+<body>
+    <div id="waveform"></div>
+    <button id="initButton">Initialize WaveSurfer</button>
+    <script>
+        let wavesurfer;
+
+        document.getElementById("initButton").addEventListener("click", () => {
+            wavesurfer = WaveSurfer.create({
+                container: "#waveform",
+            });
+
+            wavesurfer.on("ready", () => {
+                console.log("Waveform ready:", wavesurfer.getDuration());
+                console.log("WaveSurfer backend:", wavesurfer.backend);
+            });
+
+            wavesurfer.load("https://subjectivelistening.blob.core.windows.net/device-comparison/Echo Dot.mp3");
+        });
+    </script>
+</body>
+
+</html>
