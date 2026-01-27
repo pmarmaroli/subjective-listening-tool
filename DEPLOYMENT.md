@@ -81,7 +81,7 @@ az group list --output table
 
 ### Step 3: Create or Use Storage Account
 
-**Option A: Create New Storage Account**
+**Create New Storage Account**
 
 **⚠️ IMPORTANT: Storage account name MUST be:**
 - **3-24 characters maximum** (e.g., `subjective01`, `audioapp24`, `listening123`)
@@ -97,17 +97,6 @@ az storage account create `
   --kind StorageV2
 ```
 
-**Option B: Use Existing Storage Account**
-
-```bash
-# List storage accounts in your resource group
-az storage account list --resource-group YourResourceGroup --output table
-
-# Verify the storage account has:
-# - Blob storage enabled
-# - Table storage enabled
-```
-
 **Get Connection String (Required):**
 ```powershell
 # Via CLI
@@ -115,6 +104,7 @@ az storage account show-connection-string `
   --name yourstorageaccountname `
   --resource-group YourResourceGroup `
   --output tsv
+```
 
 # OR via Azure Portal:
 # Portal → Storage Account → Access keys → Connection string (copy)
@@ -190,15 +180,11 @@ For multiple domains (production + custom domain):
 - Users share only the PublicKey (not the container name directly)
 - App validates access through the table before serving audio
 
-**Option A: Create New Table**
+**Create New Table**
 
 ```powershell
 az storage table create --name datasets --account-name yourstorageaccountname
 ```
-
-**Option B: Use Existing Table**
-
-If you already have a table named "datasets", skip this step. 
 
 **✅ You're done with this step!** The table is now ready to use.
 
@@ -413,102 +399,27 @@ Visit `http://localhost:3000` to verify the application runs correctly.
 
 ---
 
-## Azure DevOps Pipeline Configuration
+## Automatic Deployment
 
-### Step 1: Create Azure DevOps Project
+### Step 1: Enable Basic Auth Credentials
 
-1. Go to [Azure DevOps](https://dev.azure.com/)
-2. Create a new project or select existing one
-3. Go to **Project Settings** → **Service connections**
+1. Go to your Web App in the [Azure Portal](https://portal.azure.com).
+2. Navigate to **Settings** → **Configuration** (or **Configuration (preview)**).
+3. Ensure **SCM Basic Auth Publishing Credentials** is enabled.
+4. Click **Apply**.
 
-### Step 2: Create Service Connection
+### Step 2: Configure Deployment Center
 
-1. Click **New service connection**
-2. Select **Azure Resource Manager**
-3. Choose **Service principal (automatic)**
-4. Select your subscription and resource group
-5. Name it exactly as shown in your `azure-pipeline.yaml` (e.g., `YourSubscriptionName`)
-6. Click **Save**
+1. Navigate to **Deployment** → **Deployment Center**.
+2. Select **Source** → **Azure Repos** (or **GitHub**)
+3. Fill in the required details:
+   - **Organization**
+   - **Project**
+   - **Repository**
+   - **Branch**
+4. Click **Save**.
 
-### Step 3: Update Pipeline Configuration
-
-Edit `azure-pipeline.yaml` and replace placeholders:
-
-```yaml
-- task: AzureWebApp@1
-  inputs:
-    azureSubscription: "YourSubscriptionName"  # Must match service connection name
-    appType: "webApp"
-    appName: "yourwebappname"  # Your web app name from Step 4
-    package: "$(Build.ArtifactStagingDirectory)/output.zip"
-```
-
-### Step 4: Connect Repository to Azure DevOps
-
-1. Go to **Pipelines** → **Create Pipeline**
-2. Select your repository source (GitHub, Azure Repos, etc.)
-3. Choose **Existing Azure Pipelines YAML file**
-4. Select `azure-pipeline.yaml`
-5. Click **Run**
-
----
-
-## Deployment
-
-### Option 1: Automatic Deployment (via Azure DevOps)
-
-Once the pipeline is configured, every push to the `master` branch will:
-1. Install dependencies
-2. Build the project
-3. Archive files
-4. Deploy to Azure Web App
-
-### Option 2: Manual Deployment (via Azure CLI)
-
-```powershell
-# Build deployment package
-npm install --production
-Compress-Archive -Path * -DestinationPath deploy.zip -Force -Exclude ".git*","node_modules/*",".env"
-
-# Deploy to Azure
-az webapp deploy `
-  --name yourwebappname `
-  --resource-group YourResourceGroup `
-  --src-path deploy.zip `
-  --type zip
-```
-
-### Option 3: GitHub Actions (Alternative)
-
-Create `.github/workflows/azure.yml`:
-
-```yaml
-name: Deploy to Azure
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '20.x'
-    
-    - name: Install dependencies
-      run: npm install
-    
-    - name: Deploy to Azure
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'yourwebappname'
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-```
+This will automatically configure the CI/CD pipeline for your application. Each new push in your branch will automatically update the web page.
 
 ---
 
@@ -525,38 +436,6 @@ jobs:
 2. Create a test project
 3. Upload test audio files and labels
 
-### Step 3: Configure Custom Domain (Optional)
-
-```powershell
-# Add custom domain
-az webapp config hostname add `
-  --webapp-name yourwebappname `
-  --resource-group YourResourceGroup `
-  --hostname yourdomain.com
-
-# Enable HTTPS
-az webapp config ssl bind `
-  --certificate-thumbprint <thumbprint> `
-  --ssl-type SNI `
-  --name yourwebappname `
-  --resource-group YourResourceGroup
-```
-
-### Step 4: Enable Application Insights (Optional but Recommended)
-
-```powershell
-# Create Application Insights
-az monitor app-insights component create `
-  --app yourappinsights `
-  --location eastus `
-  --resource-group YourResourceGroup
-
-# Link to Web App
-az webapp config appsettings set `
-  --name yourwebappname `
-  --resource-group YourResourceGroup `
-  --settings APPINSIGHTS_INSTRUMENTATIONKEY="<your-instrumentation-key>"
-```
 
 ---
 
