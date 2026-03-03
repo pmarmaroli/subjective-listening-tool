@@ -96,13 +96,17 @@
             <div style="display: flex; justify-content: center; margin-bottom: 16px;">
                 <div id="project-container" style="width: 100%; max-width: 600px;"></div>
             </div>
-            <div class="waveform-container">
+            <div class="waveform-card">
+                <div class="waveform-track-label">
+                    <span id="waveform-track-name">No track loaded</span>
+                    <span id="waveform-time">0:00</span>
+                </div>
                 <div id="peaks-container">
                     <div id="zoomview-container"></div>
                     <div id="overview-container"></div>
                 </div>
             </div>
-            <audio id="audio" controls crossorigin="anonymous" style="width: 100%; margin-top: 12px;"></audio>
+            <audio id="audio" crossorigin="anonymous" style="display: none;"></audio>
         </div>
 
         <!-- Audio Sources -->

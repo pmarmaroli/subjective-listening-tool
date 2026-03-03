@@ -670,6 +670,10 @@ function loadTrack(track, autoPlay = false) {
   // Update current track display
   document.getElementById("currentTrack").textContent =
     "Current Track: " + track.split("/").pop().split("?")[0];
+  const waveformLabel = document.getElementById("waveform-track-name");
+  if (waveformLabel) {
+    waveformLabel.textContent = track.split("/").pop().split("?")[0];
+  }
 }
 
 function playPause() {
