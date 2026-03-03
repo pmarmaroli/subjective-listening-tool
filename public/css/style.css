@@ -43,11 +43,12 @@ body {
    ============================================================ */
 .header-section {
   width: 100%;
-  padding: 24px 32px;
+  padding: 18px 32px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   text-align: center;
   margin-bottom: 32px;
+  box-shadow: var(--shadow-sm);
 }
 
 .main-title {
@@ -87,6 +88,7 @@ body {
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
   border-radius: var(--radius);
   padding: 20px 24px;
   margin-bottom: 20px;
