@@ -441,7 +441,7 @@ function setupSpectrumAnalyzer() {
 
     if (!analyser || !fftData) {
       // Clear canvas with white background when no data
-      canvasCtx.fillStyle = "rgb(255, 255, 255)";
+      canvasCtx.fillStyle = "#1e1e2e";
       canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
       return;
     }
@@ -452,13 +452,13 @@ function setupSpectrumAnalyzer() {
     const hasData = fftData.some(value => value > 0);
     if (!hasData) {
       // Clear with white if no audio data
-      canvasCtx.fillStyle = "rgb(255, 255, 255)";
+      canvasCtx.fillStyle = "#1e1e2e";
       canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
       return;
     }
 
     // Clear canvas with white background
-    canvasCtx.fillStyle = "rgb(255, 255, 255)";
+    canvasCtx.fillStyle = "#1e1e2e";
     canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Logarithmic frequency display from 20 Hz to 20000 Hz
@@ -481,8 +481,8 @@ function setupSpectrumAnalyzer() {
         const barHeight = fftData[binIndex];
 
         // Gradient start and end colors
-        const startColor = { r: 23, g: 162, b: 184 }; // #17a2b8 (teal)
-        const endColor = { r: 230, g: 210, b: 205 }; // #e6d2cd (light pink)
+        const startColor = { r: 79, g: 70, b: 229 };  // #4f46e5 indigo (low amplitude)
+        const endColor   = { r: 167, g: 139, b: 250 }; // #a78bfa violet (high amplitude)
 
         // Calculate the color based on the bar height
         const ratio = barHeight / 255; // Normalize the barHeight to range [0, 1]
@@ -511,7 +511,7 @@ function setupSpectrumAnalyzer() {
       const frequency = Math.round(Math.pow(10, logFreq));
       
       // Draw vertical line at mouse position
-      canvasCtx.strokeStyle = "rgba(220, 53, 69, 0.8)"; // Red line
+      canvasCtx.strokeStyle = "rgba(167, 139, 250, 0.9)"; // Violet line
       canvasCtx.lineWidth = 2;
       canvasCtx.beginPath();
       canvasCtx.moveTo(mouseX, 0);
@@ -521,8 +521,8 @@ function setupSpectrumAnalyzer() {
       // Draw frequency label
       const label = `${frequency} Hz`;
       canvasCtx.font = "bold 16px Arial";
-      canvasCtx.fillStyle = "rgba(0, 0, 0, 0.9)";
-      canvasCtx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+      canvasCtx.fillStyle = "rgba(245, 245, 245, 0.95)";
+      canvasCtx.strokeStyle = "rgba(30, 30, 46, 0.9)";
       canvasCtx.lineWidth = 3;
       
       // Position label above mouse or below if near top
