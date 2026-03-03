@@ -3,158 +3,136 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tallinn Audio Player</title>
-    <link rel="icon"
-        href="favicon-32x32.ico"
-        type="image/x-icon">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-        rel="stylesheet">
-    <link href="css/style.css"
-        rel="stylesheet">
-    <!-- Peaks.js CSS -->
-    <style>
-        #peaks-container {
-            width: 100%;
-            height: 300px;
-        }
-        #zoomview-container {
-            width: 100%;
-            height: 200px;
-        }
-        #overview-container {
-            width: 100%;
-            height: 100px;
-        }
-    </style>
-
+    <link rel="icon" href="favicon-32x32.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 </head>
 
 <body>
+    <!-- Header -->
     <div class="header-section">
         <h1 class="main-title"><i class="fas fa-headphones"></i> Subjective Listening Tool</h1>
     </div>
-    
+
     <!-- Authentication Section -->
-    <div id="authSection" class="container" style="max-width: 500px; margin-top: 50px;">
-        <div class="status-card">
-            <h3 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">
-                <i class="fas fa-key"></i> Access Selection
-            </h3>
-            
-            <div style="margin-bottom: 25px;">
-                <label style="display: block; margin-bottom: 15px; font-weight: bold; color: #2c3e50;">
-                    <input type="radio" name="accessType" value="admin" id="adminAccess" style="margin-right: 10px;">
-                    <i class="fas fa-user-shield"></i> Admin Access
-                    <small style="display: block; margin-left: 25px; color: #6c757d; font-weight: normal;">
-                        Create and manage projects
-                    </small>
-                </label>
-                
-                <label style="display: block; font-weight: bold; color: #2c3e50;">
-                    <input type="radio" name="accessType" value="listener" id="listenerAccess" checked style="margin-right: 10px;">
-                    <i class="fas fa-headphones"></i> Listener Access
-                    <small style="display: block; margin-left: 25px; color: #6c757d; font-weight: normal;">
-                        Access existing project
-                    </small>
-                </label>
-            </div>
-            
-            <div class="form-group">
-                <label for="passwordInput" id="passwordLabel" style="font-weight: bold; color: #2c3e50;">
-                    <i class="fas fa-lock"></i> Enter Project Password:
-                </label>
-                <input type="password" 
-                       class="form-control" 
-                       id="passwordInput" 
-                       placeholder="Enter password">
-            </div>
-            
-            <button class="btn btn-info btn-block" 
-                    onclick="authenticateUser()" 
-                    style="margin-top: 20px;">
-                <i class="fas fa-sign-in-alt"></i> Access
-            </button>
-            
-            <p id="authError" style="color: #dc3545; text-align: center; margin-top: 15px; display: none;">
-                <i class="fas fa-exclamation-circle"></i> <span id="authErrorText"></span>
-            </p>
+    <div id="authSection" class="auth-card">
+        <div class="auth-card-logo">
+            <i class="fas fa-headphones-alt"></i>
+            <span>Subjective Listening</span>
         </div>
+        <p class="auth-card-subtitle">Sign in to access your audio project</p>
+        <h3><i class="fas fa-key"></i> Sign In</h3>
+
+        <div style="margin-bottom: 20px;">
+            <label class="access-option">
+                <input type="radio" name="accessType" value="admin" id="adminAccess">
+                <div>
+                    <div class="option-label"><i class="fas fa-user-shield"></i> Admin Access</div>
+                    <div class="option-desc">Create and manage projects</div>
+                </div>
+            </label>
+            <label class="access-option">
+                <input type="radio" name="accessType" value="listener" id="listenerAccess" checked>
+                <div>
+                    <div class="option-label"><i class="fas fa-headphones"></i> Listener Access</div>
+                    <div class="option-desc">Access an existing project</div>
+                </div>
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label for="passwordInput" id="passwordLabel">
+                <i class="fas fa-lock"></i> Enter Project Password:
+            </label>
+            <input type="password"
+                   class="form-control"
+                   id="passwordInput"
+                   placeholder="Enter password">
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="authenticateUser()" style="margin-top: 16px;">
+            <i class="fas fa-sign-in-alt"></i> Access
+        </button>
+
+        <p id="authError" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i> <span id="authErrorText"></span>
+        </p>
     </div>
-    
+
     <!-- Main Application (hidden until authenticated) -->
     <div id="mainApp" class="container" style="display: none;">
-        <!-- <div class="controls"> -->
+
+        <!-- Status card -->
         <div class="status-card">
             <p id="currentTrack" class="status-text"><i class="fas fa-music"></i> Please select your project</p>
-            <button id="logoutButton" 
-                    class="btn btn-sm btn-secondary hidden" 
+            <button id="logoutButton"
+                    class="btn btn-sm btn-secondary hidden"
                     onclick="logoutUser()"
-                    style="position: absolute; top: 10px; right: 10px;">
+                    style="position: absolute; top: 12px; right: 12px;">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </div>
-        <div id="button-project-container"
-            class="button-container">
+
+        <!-- Action buttons -->
+        <div id="button-project-container">
             <button id="createProjectButton"
-                class="btn btn-light custom-button hidden"
-                style="width: 200px; text-align: center;"
-                onclick="window.location.href='create_project.html'"><i class="fas fa-edit"></i> Create / Edit Project</button>
+                    class="btn btn-light custom-button hidden"
+                    onclick="window.location.href='create_project.html'">
+                <i class="fas fa-edit"></i> Create / Edit Project
+            </button>
             <button id="playPauseButton"
-                class="btn btn-success custom-button hidden"
-                style="width: 100px; text-align: center; margin-top: 20px; margin-bottom: 20px;"><i class="fas fa-play"></i> PLAY</button>
-            <!-- </div> -->
+                    class="btn btn-success custom-button hidden">
+                <i class="fas fa-play"></i> Play
+            </button>
         </div>
 
+        <!-- Waveform -->
         <div class="controls">
-            <h3 class="section-title"><i class="fas fa-waveform-path"></i> Audio Waveform</h3>
-            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+            <p class="section-title"><i class="fas fa-waveform-path"></i> Audio Waveform</p>
+            <div style="display: flex; justify-content: center; margin-bottom: 16px;">
                 <div id="project-container" style="width: 100%; max-width: 600px;"></div>
             </div>
-            <div id="peaks-container">
-                <div id="zoomview-container"></div>
-                <div id="overview-container"></div>
+            <div class="waveform-container">
+                <div id="peaks-container">
+                    <div id="zoomview-container"></div>
+                    <div id="overview-container"></div>
+                </div>
             </div>
-            <audio id="audio" controls crossorigin="anonymous" style="width: 100%; margin-top: 10px;"></audio>
+            <audio id="audio" controls crossorigin="anonymous" style="width: 100%; margin-top: 12px;"></audio>
         </div>
-        
-        <div class="container">
-            <h3 class="section-title"><i class="fas fa-volume-up"></i> Audio Sources</h3>
+
+        <!-- Audio Sources -->
+        <div class="controls">
+            <p class="section-title"><i class="fas fa-volume-up"></i> Audio Sources</p>
             <div id="visual-container">
                 <div class="button-container">
-                    <button id="switchToSpeaker1"
-                        class="btn btn-info custom-button hidden"></button>
-                    <button id="switchToSpeaker2"
-                        class="btn btn-info custom-button hidden"></button>
-                    <button id="switchToSpeaker3"
-                        class="btn btn-info custom-button hidden"></button>
-                    <button id="switchToSpeaker4"
-                        class="btn btn-info custom-button hidden"></button>
-                    <button id="switchToSpeaker5"
-                        class="btn btn-info custom-button hidden"></button>
-                    <button id="switchToSpeaker6"
-                        class="btn btn-info custom-button hidden"></button>
-                    <button id="switchToSpeaker7"
-                        class="btn btn-info custom-button hidden"></button>
-                    <button id="switchToSpeaker8"
-                        class="btn btn-info custom-button hidden"></button>
-                    <button id="switchToSpeaker9"
-                        class="btn btn-info custom-button hidden"></button>
-                    <button id="switchToSpeaker10"
-                        class="btn btn-info custom-button hidden"></button>
+                    <button id="switchToSpeaker1"  class="btn btn-info custom-button hidden"></button>
+                    <button id="switchToSpeaker2"  class="btn btn-info custom-button hidden"></button>
+                    <button id="switchToSpeaker3"  class="btn btn-info custom-button hidden"></button>
+                    <button id="switchToSpeaker4"  class="btn btn-info custom-button hidden"></button>
+                    <button id="switchToSpeaker5"  class="btn btn-info custom-button hidden"></button>
+                    <button id="switchToSpeaker6"  class="btn btn-info custom-button hidden"></button>
+                    <button id="switchToSpeaker7"  class="btn btn-info custom-button hidden"></button>
+                    <button id="switchToSpeaker8"  class="btn btn-info custom-button hidden"></button>
+                    <button id="switchToSpeaker9"  class="btn btn-info custom-button hidden"></button>
+                    <button id="switchToSpeaker10" class="btn btn-info custom-button hidden"></button>
                 </div>
             </div>
         </div>
 
-        <div class="container">
-            <h3 class="section-title"><i class="fas fa-chart-bar"></i> Frequency Spectrum</h3>
+        <!-- Frequency Spectrum -->
+        <div class="controls">
+            <p class="section-title"><i class="fas fa-chart-bar"></i> Frequency Spectrum</p>
             <canvas id="audioSpectrum"></canvas>
         </div>
+
     </div>
 
+    <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
     <script src="/node_modules/peaks.js/dist/peaks.min.js"></script>
     <script src="app.js"></script>
 </body>

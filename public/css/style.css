@@ -133,17 +133,44 @@ body {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 32px;
-  box-shadow: var(--shadow-md);
+  padding: 40px 36px 36px;
+  box-shadow: var(--shadow-lg);
   margin-top: 48px;
 }
 
-.auth-card h3 {
+.auth-card-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.auth-card-logo i {
+  font-size: 1.75rem;
+  color: var(--accent);
+}
+
+.auth-card-logo span {
   font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.auth-card-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  margin-bottom: 28px;
+}
+
+.auth-card h3 {
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text);
   text-align: center;
-  margin: 0 0 24px;
+  margin: 0 0 20px;
 }
 
 .auth-card h3 i {
@@ -184,7 +211,7 @@ body {
   align-items: flex-start;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius);
   cursor: pointer;
   margin-bottom: 10px;
@@ -193,12 +220,21 @@ body {
 
 .access-option:hover {
   border-color: var(--accent);
-  background: #eff6ff;
+  background: #eef2ff;
 }
 
 .access-option input[type="radio"] {
   margin-top: 2px;
   accent-color: var(--accent);
+}
+
+.access-option input[type="radio"]:checked + div .option-label {
+  color: var(--accent);
+}
+
+.access-option:has(input:checked) {
+  border-color: var(--accent);
+  background: #eef2ff;
 }
 
 .access-option .option-label {
