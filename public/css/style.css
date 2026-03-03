@@ -1,151 +1,530 @@
+/* ============================================================
+   Design tokens
+   ============================================================ */
+:root {
+  --bg:          #fafafa;
+  --surface:     #f4f4f5;
+  --border:      #e4e4e7;
+  --text:        #18181b;
+  --text-muted:  #71717a;
+  --accent:      #4f46e5;
+  --accent-dark: #4338ca;
+  --danger:      #dc2626;
+  --success:     #16a34a;
+  --radius:      10px;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:   0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:   0 8px 24px rgba(0,0,0,0.10);
+  --font:        'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:   'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: auto;
 }
 
 body {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  font-family: 'Roboto', sans-serif;
-  background: #ffffff;
-  width: 100%;
   flex-direction: column;
+  align-items: center;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  overflow: auto;
 }
 
-/* Header Section */
+/* ============================================================
+   Header
+   ============================================================ */
 .header-section {
-  text-align: center;
-  padding: 30px 20px 20px;
   width: 100%;
-  background: #f8f9fa;
-  border-bottom: 2px solid #e9ecef;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 20px;
+  padding: 24px 32px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  margin-bottom: 32px;
 }
 
 .main-title {
-  font-size: 2.5em;
-  font-weight: 700;
-  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .main-title i {
-  margin-right: 15px;
-  color: #17a2b8;
-}
-
-.subtitle {
-  font-size: 1.1em;
-  color: #6c757d;
-  margin: 10px 0 0;
-  font-weight: 300;
-}
-
-/* Status Card */
-.status-card {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  border: 2px solid #e9ecef;
-  position: relative;
-}
-
-.status-text {
-  color: #2c3e50;
-  font-size: 1.3em;
-  text-align: center;
-  margin: 0;
-  font-weight: 500;
-}
-
-.status-text i {
   margin-right: 10px;
-  color: #17a2b8;
+  color: var(--accent);
 }
 
-/* Section Titles */
-.section-title {
-  color: #2c3e50;
-  font-size: 1.5em;
-  font-weight: 600;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.section-title i {
-  margin-right: 10px;
-  color: #17a2b8;
-}
-
+/* ============================================================
+   Container
+   ============================================================ */
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 1200px;
-  padding: 25px;
-  background: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-  margin-top: 15px;
-  border: 1px solid #e9ecef;
+  width: 100%;
+  max-width: 800px;
+  padding: 0 24px 24px;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  margin-top: 0;
 }
 
+/* ============================================================
+   Cards
+   ============================================================ */
+.status-card {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.status-text {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  margin: 0;
+}
+
+.status-text i {
+  margin-right: 8px;
+  color: var(--accent);
+}
+
+/* ============================================================
+   Section titles
+   ============================================================ */
+.section-title {
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+  color: var(--text-muted);
+}
+
+.section-title i {
+  margin-right: 6px;
+}
+
+/* ============================================================
+   Auth card (login screen)
+   ============================================================ */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow-md);
+  margin-top: 48px;
+}
+
+.auth-card h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  margin: 0 0 24px;
+}
+
+.auth-card h3 i {
+  color: var(--accent);
+  margin-right: 8px;
+}
+
+/* ============================================================
+   Form elements
+   ============================================================ */
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-control {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 0.9375rem;
+  color: var(--text);
+  background: var(--bg);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+/* Radio buttons — access type */
+.access-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.access-option:hover {
+  border-color: var(--accent);
+  background: #eff6ff;
+}
+
+.access-option input[type="radio"] {
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+
+.access-option .option-label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.access-option .option-desc {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+/* Primary */
+.btn-primary {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  font-size: 0.9375rem;
+  transition: background 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: var(--accent-dark);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+}
+
+/* Secondary / outline */
+.btn-secondary {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 500;
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  font-size: 0.9375rem;
+  transition: border-color 0.15s, background 0.15s;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-muted);
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* Success */
+.btn-success {
+  background: var(--success);
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  border-radius: var(--radius);
+  padding: 10px 20px;
+  font-size: 0.9375rem;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.btn-success:hover {
+  background: #15803d;
+  color: #fff;
+}
+
+/* Info — maps to accent */
+.btn-info {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  font-size: 0.9375rem;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.btn-info:hover {
+  background: var(--accent-dark);
+  color: #fff;
+}
+
+/* Danger */
+.btn-danger {
+  background: var(--danger);
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  font-size: 0.9375rem;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+  color: #fff;
+}
+
+/* Warning */
+.btn-warning {
+  background: #f59e0b;
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  font-size: 0.9375rem;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.btn-warning:hover {
+  background: #d97706;
+  color: #fff;
+}
+
+/* Light */
+.btn-light {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 500;
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  font-size: 0.9375rem;
+  transition: background 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+
+.btn-light:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+/* Small variant */
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+}
+
+/* Block */
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+/* ============================================================
+   Track source buttons
+   ============================================================ */
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* Source switcher buttons — compact tabs */
+.button-container .btn-info {
+  width: auto;
+  min-width: 100px;
+  height: auto;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  box-shadow: none;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.button-container .btn-info:hover {
+  background: #eff6ff;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.button-container .btn-info.active,
+.button-container .btn-info:active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Action button bar (play / create project) */
+#button-project-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+#button-project-container .btn {
+  width: auto;
+  min-width: 120px;
+  height: 40px;
+  padding: 0 20px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border-radius: var(--radius);
+  box-shadow: none;
+}
+
+#button-project-container .btn:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================================================
+   Waveform
+   ============================================================ */
+.waveform-container {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+#zoomview-container {
+  width: 100%;
+  height: 200px;
+}
+
+#overview-container {
+  width: 100%;
+  height: 100px;
+}
+
+/* ============================================================
+   Spectrum canvas
+   ============================================================ */
+#audioSpectrum {
+  width: 100%;
+  height: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* ============================================================
+   Project select dropdown
+   ============================================================ */
+#project-select {
+  width: 100%;
+  max-width: 480px;
+  height: 44px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0 36px 0 14px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%236b7280" viewBox="0 0 16 16"%3E%3Cpath d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+#project-select:hover {
+  border-color: var(--accent);
+}
+
+#project-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+#project-select option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ============================================================
+   Current track label
+   ============================================================ */
+#currentTrack {
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* ============================================================
+   Error text
+   ============================================================ */
+#authError {
+  color: var(--danger);
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* ============================================================
+   Controls spacing
+   ============================================================ */
 .controls {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .controls:last-child {
   margin-bottom: 0;
 }
 
-/* Waveform Container */
-.waveform-container {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.button-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-}
-
-.button-container .btn {
-  width: 500px;
-  height: 55px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 1.05em;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-}
-
-.button-container .btn i {
-  margin-right: 8px;
-}
-
-.button-container .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.button-container .btn:active {
-  transform: translateY(0);
-}
-
+/* Visual container */
 #visual-container {
   width: 100%;
   display: flex;
@@ -153,127 +532,40 @@ body {
   align-items: center;
 }
 
-#audioSpectrum {
-  width: 100%;
-  height: 300px;
-  background: #ffffff;
-  border-radius: 8px;
-  border: 2px solid #e9ecef;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.btn-custom {
-  background-color: #9b786f;
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.btn-custom:hover {
-  background-color: #ff6347;
-  transform: scale(1.05);
-}
-
-.btn-primary {
-  background-color: #ff7f50;
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  background-color: #ff6347;
-}
-
-.btn-success {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-  border: none;
-}
-
-.btn-info {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.btn-info:hover {
-  transform: scale(1.05);
-}
-
-#currentTrack {
-  color: #2c3e50;
-  font-size: 1.2em;
-  text-align: center;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .main-title {
-    font-size: 1.8em;
-  }
-  
-  .subtitle {
-    font-size: 0.9em;
-  }
-  
-  .button-container .btn {
-    width: 100%;
-  }
-  
-  .section-title {
-    font-size: 1.2em;
-  }
-}
-
-/* Project Select Dropdown */
-#project-select {
-  width: 100%;
-  max-width: 600px;
-  height: 60px;
-  font-size: 1.3em;
-  font-weight: 600;
-  color: #2c3e50;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: 3px solid #5568d3;
-  border-radius: 15px;
-  padding: 10px 20px;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-  transition: all 0.3s ease;
-  text-align: center;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%), 
-                    url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16"%3E%3Cpath d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/%3E%3C/svg%3E');
-  background-repeat: no-repeat, no-repeat;
-  background-position: center, right 20px center;
-  background-size: cover, 20px;
-}
-
-#project-select:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-  border-color: #4a59c7;
-}
-
-#project-select:focus {
-  outline: none;
-  border-color: #4a59c7;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
-}
-
-#project-select option {
-  background: white;
-  color: #2c3e50;
-  font-size: 0.9em;
-  padding: 10px;
-}
-
-#project-select option:hover {
-  background: #f8f9fa;
-}
-
-/* Utility Classes */
+/* ============================================================
+   Utility
+   ============================================================ */
 .hidden {
   display: none !important;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 1.25rem;
+  }
+
+  .auth-card {
+    margin-top: 24px;
+    padding: 24px 20px;
+  }
+
+  .container {
+    padding: 0 16px 16px;
+  }
+
+  #button-project-container .btn {
+    width: 100%;
+  }
+
+  .button-container .btn-info {
+    min-width: 80px;
+    font-size: 0.8125rem;
+  }
+
+  #audioSpectrum {
+    height: 150px;
+  }
 }
