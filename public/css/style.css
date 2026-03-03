@@ -395,42 +395,46 @@ body {
 }
 
 /* ============================================================
-   Track source buttons
+   Track source buttons — segmented control
    ============================================================ */
 .button-container {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0;
   justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 3px;
+  overflow-x: auto;
+  max-width: 100%;
 }
 
-/* Source switcher buttons — compact tabs */
 .button-container .btn-info {
   width: auto;
-  min-width: 100px;
-  height: auto;
-  padding: 8px 16px;
-  font-size: 0.875rem;
+  min-width: 90px;
+  height: 32px;
+  padding: 0 14px;
+  font-size: 0.8125rem;
   font-weight: 500;
-  border-radius: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text);
+  border-radius: calc(var(--radius) - 2px);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
   box-shadow: none;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
 }
 
 .button-container .btn-info:hover {
-  background: #eff6ff;
-  border-color: var(--accent);
-  color: var(--accent);
+  background: var(--bg);
+  color: var(--text);
 }
 
-.button-container .btn-info.active,
-.button-container .btn-info:active {
+.button-container .btn-info.active {
   background: var(--accent);
-  border-color: var(--accent);
   color: #fff;
+  box-shadow: 0 1px 3px rgba(79,70,229,0.3);
 }
 
 /* Action button bar (play / create project) */

@@ -709,7 +709,16 @@ function showSpeakerButtons(tracks) {
       
       button.textContent = displayName; // Sets button label to clean file name
       button.classList.remove("hidden"); // Shows the button
-      button.addEventListener("click", () => loadTrack(track, true));
+      if (index === 0) button.classList.add("active");
+      button.addEventListener("click", () => {
+        // Remove active from all source buttons
+        for (let i = 1; i <= 10; i++) {
+          const b = document.getElementById(`switchToSpeaker${i}`);
+          if (b) b.classList.remove("active");
+        }
+        button.classList.add("active");
+        loadTrack(track, true);
+      });
     }
   });
 }
