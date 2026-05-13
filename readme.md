@@ -7,7 +7,7 @@ A web application for comparing multiple audio files of the same recording in di
 ## What It Does
 
 - **Compare Audio:** Play and switch between different versions of the same audio recording
-- **Visualize:** Display audio waveforms and labeled regions using WaveSurfer.js
+- **Visualize:** Display audio waveforms and labeled regions using Peaks.js
 - **Navigate:** Jump between labeled segments for focused listening comparisons
 - **Manage Projects:** Admin interface to create listening test projects and upload audio files
 - **Secure Access:** Simple key-based access control for sharing listening tests
@@ -22,7 +22,7 @@ A web application for comparing multiple audio files of the same recording in di
 
 **Frontend:** Vanilla JavaScript application that:
 - Loads audio files from Azure Blob Storage
-- Renders waveforms with WaveSurfer.js
+- Renders waveforms with Peaks.js
 - Allows users to compare and switch between audio versions
 
 **Storage:**
@@ -39,7 +39,6 @@ A web application for comparing multiple audio files of the same recording in di
 │   ├── create_project.html # Admin interface for project creation
 │   ├── app.js              # Client-side application logic
 │   └── css/style.css       # Styles
-├── azure-pipeline.yaml     # Azure DevOps CI/CD pipeline
 ├── .env.example            # Environment variables template
 └── DEPLOYMENT.md           # Complete deployment guide
 ```
@@ -48,7 +47,7 @@ A web application for comparing multiple audio files of the same recording in di
 
 - **Node.js v20.x** - Server runtime
 - **Express** - Web framework
-- **WaveSurfer.js** - Audio waveform visualization
+- **Peaks.js** - Audio waveform visualization
 - **Azure Blob Storage** - Audio file storage (MP3, WAV, FLAC, OGG, AAC, M4A)
 - **Azure Table Storage** - Project metadata
 - **Azure App Service** - Hosting platform

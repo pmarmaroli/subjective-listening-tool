@@ -115,7 +115,7 @@ az storage account show-connection-string `
 
 **What is CORS?** Cross-Origin Resource Sharing (CORS) allows your web application (running on `yourwebappname.azurewebsites.net`) to access files stored in Azure Blob Storage (which has a different domain like `yourstorageaccountname.blob.core.windows.net`). Without CORS, browsers block these cross-domain requests for security.
 
-**Why is this needed?** The Subjective Listening Tool loads audio files directly in the browser using WaveSurfer.js. When users play audio, their browser makes requests to Blob Storage to fetch the audio files. CORS configuration tells Azure Storage to allow these requests.
+**Why is this needed?** The Subjective Listening Tool loads audio files directly in the browser using Peaks.js. When users play audio, their browser makes requests to Blob Storage to fetch the audio files. CORS configuration tells Azure Storage to allow these requests.
 
 **During Development:** Configure CORS to allow both localhost (for testing) and your Azure Web App:
 

@@ -1,12 +1,10 @@
 const express = require("express");
 const path = require("path");
-const fs = require("fs");
-const bodyParser = require("body-parser");
+const helmet = require("helmet");
 const morgan = require("morgan");
 const multer = require("multer");
 const { BlobServiceClient } = require("@azure/storage-blob");
-const ffmpeg = require("fluent-ffmpeg");
-const { TableServiceClient, TableClient } = require("@azure/data-tables");
+const { TableClient, odata } = require("@azure/data-tables");
 
 require("dotenv").config();
 
@@ -32,10 +30,19 @@ const blobServiceClient =
 
 // Initialize Express app
 const app = express();
+app.use(helmet());
 app.use(express.static("public"));
 app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
 app.use(morgan("combined"));
-app.use(bodyParser.json());
+app.use(express.json());
+
+// Admin authentication middleware
+function requireAdmin(req, res, next) {
+  if (req.headers['x-admin-token'] !== webpagepwd) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  next();
+}
 
 // Optional: Handle root "/" explicitly
 app.get("/", (req, res) => {
@@ -47,7 +54,7 @@ app.post("/api/check-publicKey", async (req, res) => {
   const publicKey = req.body.publicKey;
 
   // Query the table for entries with the matching publicKey
-  const filter = `PublicKey eq '${publicKey}'`;
+  const filter = odata`PublicKey eq ${publicKey}`;
   const entities = tableClient.listEntities({ queryOptions: { filter } });
 
   const containerNames = [];
@@ -77,7 +84,7 @@ app.post("/api/check-admin", async (req, res) => {
 });
 
 // Endpoint to get all projects (admin only)
-app.get("/api/all-projects", async (req, res) => {
+app.get("/api/all-projects", requireAdmin, async (req, res) => {
   try {
     const entities = tableClient.listEntities();
     const containerNames = [];
@@ -134,20 +141,16 @@ app.get("/api/labels/:projectName", async (req, res) => {
   try {
     const projectName = req.params.projectName;
     const containerClient = blobServiceClient.getContainerClient(projectName);
-    console.log("Container client: ", containerClient);
     const blobClient = containerClient.getBlobClient("labels.txt");
-    console.log("Blob client: ", blobClient);
 
     // Check if labels.txt exists
     const exists = await blobClient.exists();
     if (!exists) {
-      console.log("No labels.txt found - this is optional, returning empty response");
       return res.send(""); // Return empty string if no labels file
     }
 
     const downloadResponse = await blobClient.download();
     const labels = await streamToString(downloadResponse.readableStreamBody);
-    console.log("Labels: ", labels);
 
     res.send(labels);
   } catch (error) {
@@ -169,20 +172,6 @@ async function streamToString(readableStream) {
     readableStream.on("error", reject);
   });
 }
-
-// app.get("/api/get-container-names", async (req, res) => {
-//   try {
-//     const containers = blobServiceClient.listContainers();
-//     const containerNames = [];
-//     for await (const container of containers) {
-//       containerNames.push(container.name);
-//     }
-//     res.json(containerNames);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Error retrieving container names.");
-//   }
-// });
 
 // Function to get the number of entities in the table
 async function getEntityCount() {
@@ -222,7 +211,10 @@ app.post("/api/create-container", async (req, res) => {
 });
 
 // Setup multer for handling file uploads
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 100 * 1024 * 1024, files: 10 } // 100 MB per file, 10 files max
+});
 
 // Upload audio files (overwrite if exist)
 app.post(
@@ -246,52 +238,6 @@ app.post(
   }
 );
 
-// Note: Audio files are stored in their original format without conversion.
-// Supported formats: MP3, WAV, OGG, FLAC, AAC, M4A
-// All modern browsers support MP3 and WAV playback natively.
-
-// Upload audio files (overwrite if exist)
-// app.get("/api/tracks/:projectName", async (req, res) => {
-//   try {
-//     const projectName = req.params.projectName;
-//     const containerClient = blobServiceClient.getContainerClient(projectName);
-//     console.log("Container client: ", containerClient);
-
-//     // Ensure the container exists
-//     const containerExists = await containerClient.exists();
-//     if (!containerExists) {
-//       return res.status(404).send(`Container "${projectName}" not found.`);
-//     }
-
-//     const blobs = containerClient.listBlobsFlat();
-//     const blobUrls = [];
-
-//     for await (const blob of blobs) {
-//       if (blob.name.endsWith(".mp3")) {
-//         // const blobUrl = `https://${blobServiceClient.accountName}.blob.core.windows.net/${projectName}/${blob.name}`;
-//         const blobUrl = `https://${
-//           blobServiceClient.accountName
-//         }.blob.core.windows.net/${encodeURIComponent(
-//           projectName
-//         )}/${encodeURIComponent(blob.name)}`;
-
-//         blobUrls.push(blobUrl);
-//       }
-//     }
-
-//     console.log("Blob URLs: ", blobUrls);
-
-//     if (blobUrls.length === 0) {
-//       return res.status(404).send("No audio files found.");
-//     }
-
-//     res.json(blobUrls);
-//   } catch (error) {
-//     console.error("Error retrieving tracks:", error);
-//     res.status(500).send("Error retrieving tracks.");
-//   }
-// });
-
 // Upload labels.txt (overwrite if exist)
 app.post(
   "/api/upload-labels/:projectName",
@@ -314,10 +260,10 @@ app.post(
 app.delete("/api/delete-container/:projectName", async (req, res) => {
   try {
     const projectName = req.params.projectName;
-    const publicKey = req.query.publicKey; // Changed from req.body.publicKey to req.query.publicKey
+    const publicKey = req.query.publicKey;
 
     // Check if the publicKey is associated with the container
-    const filter = `PublicKey eq '${publicKey}' and ProjectName eq '${projectName}'`;
+    const filter = odata`PublicKey eq ${publicKey} and ProjectName eq ${projectName}`;
     const entities = tableClient.listEntities({ queryOptions: { filter } });
     let found = false;
     let entityToDelete = null;
@@ -349,12 +295,12 @@ app.delete("/api/delete-container/:projectName", async (req, res) => {
 });
 
 // Get project metadata and files
-app.get("/api/project/:projectName", async (req, res) => {
+app.get("/api/project/:projectName", requireAdmin, async (req, res) => {
   try {
     const projectName = req.params.projectName;
     
     // Get project metadata from table
-    const filter = `ProjectName eq '${projectName}'`;
+    const filter = odata`ProjectName eq ${projectName}`;
     const entities = tableClient.listEntities({ queryOptions: { filter } });
     let projectData = null;
 
@@ -396,13 +342,13 @@ app.get("/api/project/:projectName", async (req, res) => {
 });
 
 // Update project metadata (PublicKey and Email)
-app.put("/api/project/:projectName", async (req, res) => {
+app.put("/api/project/:projectName", requireAdmin, async (req, res) => {
   try {
     const projectName = req.params.projectName;
     const { newPublicKey, newEmail } = req.body;
 
     // Find the project entity
-    const filter = `ProjectName eq '${projectName}'`;
+    const filter = odata`ProjectName eq ${projectName}`;
     const entities = tableClient.listEntities({ queryOptions: { filter } });
     let existingEntity = null;
 
@@ -433,7 +379,7 @@ app.put("/api/project/:projectName", async (req, res) => {
 });
 
 // Delete individual file from project
-app.delete("/api/file/:projectName/:fileName", async (req, res) => {
+app.delete("/api/file/:projectName/:fileName", requireAdmin, async (req, res) => {
   try {
     const { projectName, fileName } = req.params;
 

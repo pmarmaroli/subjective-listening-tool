@@ -172,7 +172,7 @@ async function loadProjectDetails() {
   }
 
   try {
-    const response = await fetch(`/api/project/${projectName}`);
+    const response = await fetch(`/api/project/${projectName}`, { headers: adminHeaders() });
     
     if (!response.ok) {
       alert("Project not found.");
@@ -238,7 +238,7 @@ async function updateProject() {
   try {
     const response = await fetch(`/api/project/${projectName}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...adminHeaders() },
       body: JSON.stringify({
         newPublicKey: newPublicKey || undefined,
         newEmail: newEmail || undefined
@@ -270,7 +270,7 @@ async function deleteFile(projectName, fileName) {
   try {
     const response = await fetch(
       `/api/file/${projectName}/${encodeURIComponent(fileName)}`,
-      { method: "DELETE" }
+      { method: "DELETE", headers: adminHeaders() }
     );
 
     const message = await response.text();
@@ -291,6 +291,12 @@ function formatFileSize(bytes) {
   if (bytes < 1024) return bytes + " B";
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
   return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+}
+
+// Helper: return admin auth header
+function adminHeaders() {
+  const token = sessionStorage.getItem('adminToken');
+  return token ? { 'X-Admin-Token': token } : {};
 }
 
 // Check admin authentication on page load
@@ -316,7 +322,7 @@ async function loadProjectsDropdown() {
   console.log('Fetching projects...');
   
   try {
-    const response = await fetch('/api/all-projects');
+    const response = await fetch('/api/all-projects', { headers: adminHeaders() });
     
     console.log('Response status:', response.status);
     

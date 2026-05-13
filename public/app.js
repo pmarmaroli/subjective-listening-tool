@@ -1,6 +1,3 @@
-// const WavesurferTimelinePlugin = WaveSurfer.timeline; // Only if the plugin is attached to the WaveSurfer object
-// var WavesurferTimelinePlugin = require("wavesurfer.js/dist/plugin/wavesurfer.regions.min.js");
-
 console.log("Current directory:", window.location.pathname);
 
 let peaksInstance = null;
@@ -13,9 +10,7 @@ let sourceNode;
 let tracks = [];
 const projectContainer = document.getElementById("project-container");
 let projectSelect = document.createElement("select");
-const labelSelect = document.createElement("select");
 let emptyOption = document.createElement("option");
-let folders = [];
 const playPauseButton = document.getElementById(`playPauseButton`);
 
 // Audio preloading cache
@@ -45,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("logoutButton").classList.remove("hidden");
     
     // Load all projects for admin
-    const projectsResponse = await fetch("/api/all-projects");
+    const projectsResponse = await fetch("/api/all-projects", { headers: adminHeaders() });
     const projectsData = await projectsResponse.json();
     createProjectSelectElement(projectsData.containerNames);
     
@@ -107,6 +102,7 @@ async function authenticateUser() {
         isAdminMode = true;
         // Store admin authentication in sessionStorage
         sessionStorage.setItem('isAdmin', 'true');
+        sessionStorage.setItem('adminToken', document.getElementById("passwordInput").value.trim());
         
         document.getElementById("authSection").style.display = "none";
         document.getElementById("mainApp").style.display = "block";
@@ -114,7 +110,7 @@ async function authenticateUser() {
         document.getElementById("logoutButton").classList.remove("hidden");
         
         // Load all projects for admin
-        const projectsResponse = await fetch("/api/all-projects");
+        const projectsResponse = await fetch("/api/all-projects", { headers: adminHeaders() });
         const projectsData = await projectsResponse.json();
         createProjectSelectElement(projectsData.containerNames);
         
@@ -156,6 +152,12 @@ async function authenticateUser() {
   }
 }
 
+// Helper: return admin auth header if authenticated
+function adminHeaders() {
+  const token = sessionStorage.getItem('adminToken');
+  return token ? { 'X-Admin-Token': token } : {};
+}
+
 // Expose authenticateUser to global scope for inline onclick handler
 window.authenticateUser = authenticateUser;
 
@@ -163,55 +165,13 @@ window.authenticateUser = authenticateUser;
 function logoutUser() {
   if (confirm('Are you sure you want to logout?')) {
     sessionStorage.removeItem('isAdmin');
+    sessionStorage.removeItem('adminToken');
     window.location.reload();
   }
 }
 
 // Expose logoutUser to global scope
 window.logoutUser = logoutUser;
-
-// Remove old DOMContentLoaded that used prompt
-/*
-document.addEventListener("DOMContentLoaded", async () => {
-  playPauseButton.addEventListener("click", playPause);
-
-  // Fetch container names and create project select element
-  const publicKey = prompt("Enter a public key");
-  try {
-    const response = await fetch("/api/check-publicKey", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ publicKey }),
-    });
-
-    if (!response.ok) {
-      document.getElementById("currentTrack").textContent =
-        "No project found for this public key. Please try again.";
-
-      throw new Error("Failed to fetch container names");
-    }
-
-    document.getElementById("currentTrack").textContent =
-      "Please select your project";
-
-    const data = await response.json();
-    console.log("Container names:", data.containerNames);
-    createProjectSelectElement(data.containerNames);
-  } catch (error) {
-    console.error("Error fetching container names:", error);
-    // Handle the error (e.g., show an error message to the user)
-  }
-});
-*/
-
-function waitForMediaElement(callback) {
-  const checkInterval = setInterval(() => {
-    if (wavesurfer.getMediaElement()) {
-      clearInterval(checkInterval);
-      callback();
-    }
-  }, 100); // Check every 100ms
-}
 
 function connectAnalyser() {
   console.log("Connecting analyser...");
